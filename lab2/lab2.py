@@ -58,6 +58,9 @@ normalized = cv.normalize(img.astype(
 rotated = rotate_image(normalized, 45)
 doubled = enlarge2(normalized)
 
+
+plt.imsave('result' + '_sclaed.png', doubled)
+
 plt.subplot(1, 3, 1)
 plt.imshow(img)
 plt.subplot(1, 3, 2)
