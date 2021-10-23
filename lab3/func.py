@@ -14,6 +14,18 @@ def get_image(name):
     img = cv.imread('lab3/test_images/' + name + '.tif')[..., ::-1]
     return cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
+def __base_filter(img, area_size, filter):
+    result_img = np.zeros(img.shape)
+    padded_img = __pad_image(img, area_size)
+
+    h, w = img.shape
+    area_r = area_size // 2
+    for coord, v in np.ndenumerate(padded_img[area_r:h + area_r, area_r:w + area_r]):
+        i, j = coord
+        area = padded_img[i:i + 2 * area_r + 1, j:j + 2 * area_r + 1]
+        result_img[i][j] = filter(area)
+    return result_img
+
 
 # 3.1
 __brightness_levels = 256
@@ -21,7 +33,6 @@ ref = np.arange(__brightness_levels)
 
 
 def count_p(img):
-    """returns set of {brightness: probability}"""
     probabilities = {}
     values, counts = np.unique(img, return_counts=True)
     for index, value in np.ndenumerate(values):
@@ -38,18 +49,13 @@ def equalize(img):
 
 
 # 3.2
+def __equalize_local(area):
+    area_h, area_w = area.shape
+    return equalize(area)[area_h][area_h]
+
+
 def equalize_local(img, area_size):
-    result_img = np.zeros(img.shape)
-    padded_img = __pad_image(img, area_size)
-
-    h, w = img.shape
-    area_r = area_size // 2
-    for coord, v in np.ndenumerate(padded_img[area_r:h + area_r, area_r:w + area_r]):
-        i, j = coord
-        area = padded_img[i:i + 2 * area_r + 1, j:j + 2 * area_r + 1]
-        result_img[i][j] = equalize(area)[area_r][area_r]
-
-    return result_img
+    return __base_filter(img, area_size, __equalize_local)
 
 
 # 3.3
@@ -71,19 +77,6 @@ def __convulate(area):
     return result
 
 
-def __base_filter(img, area_size, filter):
-    result_img = np.zeros(img.shape)
-    padded_img = __pad_image(img, area_size)
-
-    h, w = img.shape
-    area_r = area_size // 2
-    for coord, v in np.ndenumerate(padded_img[area_r:h + area_r, area_r:w + area_r]):
-        i, j = coord
-        area = padded_img[i:i + 2 * area_r + 1, j:j + 2 * area_r + 1]
-        result_img[i][j] = filter(area)
-    return result_img
-
-
 def my_2dfilter(img, area_size):
     return __base_filter(img, area_size, __convulate)
 
@@ -101,16 +94,8 @@ def threshold_filter(img, threshold):
 
 # 3.4
 def median_filter(img, area_size):
-    result_img = np.zeros(img.shape)
-    padded_img = __pad_image(img, area_size)
-
-    h, w = img.shape
-    area_r = area_size // 2
-    for coord, v in np.ndenumerate(padded_img[area_r:h + area_r, area_r:w + area_r]):
-        i, j = coord
-        area = padded_img[i:i + 2 * area_r + 1, j:j + 2 * area_r + 1]
-        result_img[i][j] = np.median(np.concatenate(area), axis=0)
-    return result_img
+    median = lambda x: np.median(np.concatenate(x), axis=0)
+    return __base_filter(img, area_size, median)
 
 
 # 3.5
