@@ -1,7 +1,9 @@
 import numpy as np
+import time
 
 
 def split_in_blocks(img, bloc_shape, block_processor) -> np.ndarray:
+    start_time = time.time()
     h, w = img.shape
     result = np.zeros(img.shape)
 
@@ -24,4 +26,5 @@ def split_in_blocks(img, bloc_shape, block_processor) -> np.ndarray:
         y_slice = slice(orig_y, orig_y + bloc_h)
         x_slice = slice(orig_x, orig_x + bloc_w)
         result[y_slice, x_slice] = block_processor(img[y_slice, x_slice])
+    print("%ss" % (time.time() - start_time))
     return result
