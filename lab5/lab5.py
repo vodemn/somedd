@@ -37,7 +37,7 @@ def idct2(x): return idctn(x, norm='ortho')
 
 for b in init_bs:
     shuffeled = shuffle(split_in_blocks(img, bloc_shape, dct2), ibloc_shape)
-    quantized = quantize(shuffeled, ibloc_shape, 4)
+    quantized = quantize(shuffeled, ibloc_shape, b)
     compressed = split_in_blocks(shuffle(quantized, bloc_shape), bloc_shape, idct2)
     psnr_result[b - 1] = psnr(img, compressed)
 
@@ -47,3 +47,5 @@ for b in init_bs:
     plt.imshow(compressed, cmap='gray', vmin=0, vmax=255)
     plt.show()
 
+plt.plot(init_bs, psnr_result)
+plt.show()
