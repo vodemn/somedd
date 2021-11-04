@@ -1,12 +1,15 @@
+from math import log2
 import numpy as np
 
 
-def split_in_blocks(img, bloc_shape, block_processor) -> np.ndarray:
+def quantize(img, bloc_shape, bit_budget) -> np.ndarray:
     h, w = img.shape
     result = np.zeros(img.shape)
-
     bloc_h, bloc_w = bloc_shape
-    
+
+    bit_budget = np.round(bit_budget, 0)
+    bit_budget = [[0 if i <= 0 else i for i in row] for row in bit_budget]
+
     # size of resulting 2d array of block
     result_h = h // bloc_h
     result_w = w // bloc_w
@@ -23,5 +26,10 @@ def split_in_blocks(img, bloc_shape, block_processor) -> np.ndarray:
         # size of resulting block
         y_slice = slice(orig_y, orig_y + bloc_h)
         x_slice = slice(orig_x, orig_x + bloc_w)
-        result[y_slice, x_slice] = block_processor(img[y_slice, x_slice])
-    return result
+
+        h = 2 ** bit_budget[y][x]
+
+        for coord, value in np.ndenumerate(img[y_slice, x_slice]):
+            result[y_slice, x_slice][coord[0]][coord[1]] = np.round(value * h) / h
+
+        return result
