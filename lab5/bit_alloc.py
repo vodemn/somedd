@@ -4,7 +4,7 @@ import numpy as np
 epsilon = 1/12
 
 
-def bit_budget(img, bloc_shape, init_b) -> np.ndarray:
+def bit_alloc(img, bloc_shape, init_b) -> np.ndarray:
     h, w = img.shape
     bloc_h, bloc_w = bloc_shape
 

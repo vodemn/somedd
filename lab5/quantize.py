@@ -1,13 +1,14 @@
+from bit_alloc import bit_alloc
 from math import log2
 import numpy as np
 
 
-def quantize(img, bloc_shape, bit_budget) -> np.ndarray:
+def quantize(img, bloc_shape, init_b) -> np.ndarray:
     h, w = img.shape
     result = np.zeros(img.shape)
     bloc_h, bloc_w = bloc_shape
 
-    bit_budget = np.round(bit_budget, 0)
+    bit_budget = np.round(bit_alloc(img, bloc_shape, init_b), 0)
     bit_budget = [[0 if i <= 0 else i for i in row] for row in bit_budget]
 
     # size of resulting 2d array of block
