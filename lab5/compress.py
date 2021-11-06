@@ -25,10 +25,6 @@ def compress(img, bloc_shape):
         
         line = run_length_encoding(zig_zag(img[block_slice]))
         huff_dict = huffman.codebook(line)
-        
-        if (coord == (0,0)):
-            print(line)
-            print(huff_dict)
 
         for k, v in huff_dict.items():
             huff_dict[k] = int(v, 2)

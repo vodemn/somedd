@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def split_in_blocks(img, bloc_shape, block_processor) -> np.ndarray:
+def split_in_blocks(img: np.ndarray, bloc_shape: tuple, block_processor) -> np.ndarray:
     h, w = img.shape
     result = np.zeros(img.shape)
 
@@ -16,13 +16,9 @@ def split_in_blocks(img, bloc_shape, block_processor) -> np.ndarray:
         y = i // result_w
         x = i - y * result_w
 
-        # coresponding coords in original array
-        orig_y = y * bloc_h
-        orig_x = x * bloc_w
-
         # size of resulting block
-        block_slice = (slice(orig_y, orig_y + bloc_h),
-                       slice(orig_x, orig_x + bloc_w))
-                       
+        block_slice = (slice(bloc_h * y, bloc_h * (y + 1)),
+                       slice(bloc_w * x, bloc_w * (x + 1)))
+
         result[block_slice] = block_processor(img[block_slice])
     return result

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def shuffle(img, bloc_shape) -> np.ndarray:
+def shuffle(img: np.ndarray, bloc_shape: tuple) -> np.ndarray:
     h, w = img.shape
     result = np.zeros(img.shape)
 
