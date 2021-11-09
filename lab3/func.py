@@ -40,6 +40,12 @@ def count_p(img):
     return probabilities
 
 
+def histogram(img):
+    hist = np.zeros(ref.size)
+    for k, v in count_p(img).items():
+        hist[k] = v
+    return hist
+
 def equalize(img):
     p = count_p(img)
     t = np.cumsum(np.fromiter(p.values(), dtype='float'), 0) * \
