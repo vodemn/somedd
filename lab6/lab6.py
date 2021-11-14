@@ -1,34 +1,47 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2 as cv
-from huffman import huffmandict, huffmanenco
-from entropy import entropy
+from huffman import codebook
+from huff import huffmandict, huffmanenco, huffmandeco
+from func import count_variances, histogram, entropy, avg_length, compression
 
 
 img_name = 'test_images/kodim14.png'
 img = cv.cvtColor(cv.imread(img_name)
                   [..., ::-1][:256, :256], cv.COLOR_BGR2GRAY)
 
-ref = np.arange(256)
+variances, counts_dict = count_variances(img)
+hist = histogram(variances)
 
-variances = {}
-huff_dict = {}
-values, counts = np.unique(img, return_counts=True)
-for index, value in np.ndenumerate(values):
-    huff_dict[value] = counts[index]
-    variances[value] = counts[index] / img.size
+plt.bar(np.arange(256),  hist)
+plt.show()
 
-hist = np.zeros(ref.size)
-for k, v in variances.items():
-    hist[k] = v
+ent = entropy(variances.values())
+print('Entropy: ' + str(ent))
 
-#plt.subplot(1, 2, 1)
-#plt.bar(ref,  hist)
-#plt.subplot(1, 2, 2)
-#plt.imshow(img, cmap='gray', vmin=0, vmax=255)
-#plt.show()
-
-ent = entropy(img, variances)
-huff_dict = huffmandict(huff_dict)
+print('\nSelf-writtem huffdict')
+huff_dict = huffmandict(counts_dict)
 encoded_img = huffmanenco(img, huff_dict)
-print(ent)
+
+avg_len = avg_length(variances, huff_dict)
+print('Avg length: ' + str(avg_len))
+
+decoded_img = huffmandeco(encoded_img, huff_dict)
+plt.imshow(decoded_img, cmap='gray', vmin=0, vmax=255)
+
+compression_coef = compression(encoded_img, huff_dict)
+print('Compressed: ' + str(compression_coef) + '%')
+
+# Package huffmandict
+print('\nPackage huffdict')
+huff_dict = codebook(counts_dict.items())
+encoded_img = huffmanenco(img, huff_dict)
+
+avg_len = avg_length(variances, huff_dict)
+print('Avg length: ' + str(avg_len))
+
+decoded_img = huffmandeco(encoded_img, huff_dict)
+plt.imshow(decoded_img, cmap='gray', vmin=0, vmax=255)
+
+compression_coef = compression(encoded_img, huff_dict)
+print('Compressed: ' + str(compression_coef) + '%')
