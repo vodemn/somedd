@@ -3,8 +3,8 @@ import numpy as np
 
 
 def split(img: np.ndarray, 
-                    block_shape: Tuple, 
-                    block_fn: Callable) -> np.ndarray:
+          block_shape: Tuple, 
+          block_fn: Callable) -> np.ndarray:
     M, N = img.shape
     res = np.zeros(img.shape)
     block_M, block_N = block_shape

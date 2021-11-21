@@ -4,7 +4,7 @@ from scipy.fftpack import dctn, idctn
 
 
 def alpha(x, n):
-    return np.sqrt((1 if x == 0 else 2) / n)
+    return np.sqrt((1. if x == 0 else 2.) / n)
 
 def dct2(block) -> np.ndarray:
     """DCT2 realization using numpy"""
@@ -19,7 +19,6 @@ def dct2(block) -> np.ndarray:
         res[p][q] *= alpha(p, M) * alpha(q, N)
 
     return res
-
 
 def idct2(block) -> np.ndarray:
     """IDCT2 realization using numpy"""
