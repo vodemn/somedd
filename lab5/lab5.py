@@ -46,7 +46,7 @@ for b in init_bs:
     quantized = quantize(shuffeled, ibloc_shape, b)
 
     compressed = split_in_blocks(shuffle(quantized, bloc_shape), bloc_shape, idct2)
-    psnr_result[b - 1] = psnr(img, compressed) / 100
+    psnr_result[b - 1] = psnr(img, compressed)
     
     plt.imsave('lab5/result_images/' + str(b) + '.png', compressed, cmap='gray', vmin = 0, vmax = 1)
 
