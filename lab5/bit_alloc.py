@@ -18,7 +18,7 @@ def bit_alloc(img, bloc_shape, init_b) -> np.ndarray:
         block_slice = (slice(y * bloc_h, y * bloc_h + bloc_h),
                        slice(x * bloc_w, x * bloc_w + bloc_w))
 
-        img_var[y][x] = epsilon * (np.var(img[block_slice]) ** 2)
+        img_var[y][x] = epsilon * np.var(img[block_slice])
 
     divider = np.prod(np.power(img_var, 1 / img_var.size))
     return np.array([[__round_bit(init_b, i, divider) for i in row] for row in img_var])
