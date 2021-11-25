@@ -1,24 +1,24 @@
-from bit_alloc import bit_alloc
-from math import log2
 import numpy as np
+from math import log2
+from bit_alloc import bit_alloc
 
 
-def quantize(img: np.ndarray, bloc_shape: tuple, init_b: int) -> np.ndarray:
+def quantize(img: np.ndarray, 
+             block_shape: tuple, 
+             init_b: int) -> np.ndarray:
     result = np.zeros(img.shape)
-    bloc_h, bloc_w = bloc_shape
+    block_H, block_W = block_shape
 
-    bit_budget = bit_alloc(img, bloc_shape, init_b)
-    for coord, bit in np.ndenumerate(bit_budget):
+    bit_val = bit_alloc(img, block_shape, init_b)
+    for (y, x), bit in np.ndenumerate(bit_val):
         h = 2 ** bit
-        
-        # coresponding coords in original array
-        orig_y = coord[0] * bloc_h
-        orig_x = coord[1] * bloc_w
-        block_slice = (slice(orig_y, orig_y + bloc_h),
-                       slice(orig_x, orig_x + bloc_w))
+        # getting coordinatess in image
+        img_y = y * block_H
+        img_x = x * block_W
+        block_window = (slice(img_y, img_y + block_H),
+                        slice(img_x, img_x + block_W))
 
-        for block_coord, value in np.ndenumerate(img[block_slice]):
-            b, a = block_coord
-            result[orig_y + b][orig_x + a] = np.round(value * h) / h
+        for (b, a), val in np.ndenumerate(img[block_window]):
+            result[img_y + b][img_x + a] = np.round(val * h) / h
 
     return result
