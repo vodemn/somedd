@@ -61,7 +61,17 @@ def __equalize_local(area):
 
 
 def equalize_local(img, area_size):
-    return __base_filter(img, area_size, __equalize_local)
+    result_img = np.zeros(img.shape)
+    padded_img = __pad_image(img, area_size)
+
+    h, w = img.shape
+    area_r = area_size // 2
+    for coord, v in np.ndenumerate(padded_img[area_r:h + area_r, area_r:w + area_r]):
+        i, j = coord
+        area = padded_img[i:i + 2 * area_r + 1, j:j + 2 * area_r + 1]
+        result_img[i][j] = equalize(area)[area_r][area_r]
+
+    return result_img
 
 
 # 3.3
