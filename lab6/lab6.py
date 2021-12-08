@@ -28,6 +28,7 @@ print('Avg length: ' + str(avg_len))
 
 decoded_img = huffmandeco(encoded_img, huff_dict)
 plt.imshow(decoded_img, cmap='gray', vmin=0, vmax=255)
+plt.show()
 
 compression_coef = compression(encoded_img, huff_dict)
 print('Compressed: ' + str(compression_coef) + '%')
@@ -42,6 +43,7 @@ print('Avg length: ' + str(avg_len))
 
 decoded_img = huffmandeco(encoded_img, huff_dict)
 plt.imshow(decoded_img, cmap='gray', vmin=0, vmax=255)
+plt.show()
 
 compression_coef = compression(encoded_img, huff_dict)
 print('Compressed: ' + str(compression_coef) + '%')
