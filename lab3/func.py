@@ -11,7 +11,7 @@ def __pad_image(img, area_size):
 
 
 def get_image(name):
-    img = cv.imread('lab3/test_images/' + name + '.tif')[..., ::-1]
+    img = cv.imread('test_images/' + name + '.tif')[..., ::-1]
     return cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
 def __base_filter(img, area_size, filter):
