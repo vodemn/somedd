@@ -8,46 +8,49 @@ from sigmoid import sigmoid, sigmoid_derive
 from softmax import softmax
 
 
-def int_to_onehot(n) -> np.array:
+def int_to_onehot(n: int) -> np.array:
     v = [0] * 10
     v[n] = 1
     return np.array(v)
 
 
-m = scipy.io.loadmat('lab8/dataset.mat')
-inputs = m['inputs']
-targets = np.array([int_to_onehot(number[0]) for number in m['targets'].T]).T
+def run_lab(lr, first_layer_size: int = 256, show_plot: bool = True):
+    m = scipy.io.loadmat('lab8/dataset.mat')
+    inputs = m['inputs']
+    targets = np.array([int_to_onehot(number[0]) for number in m['targets'].T]).T
 
-bigger_part = int(inputs.shape[1] * 0.8)
+    bigger_part = int(inputs.shape[1] * 0.8)
 
-training_inputs = inputs[..., :bigger_part]
-training_targets = targets[..., :bigger_part]
-test_inputs = inputs[..., bigger_part:]
-test_targets = targets[..., bigger_part:]
+    training_inputs = inputs[..., :bigger_part]
+    training_targets = targets[..., :bigger_part]
+    test_inputs = inputs[..., bigger_part:]
+    test_targets = targets[..., bigger_part:]
 
-print(training_inputs.shape, training_targets.shape,
-      test_inputs.shape, test_targets.shape)
+    layers = [Dense(training_inputs.shape[0], first_layer_size, sigmoid, sigmoid_derive, lr),
+              Dense(first_layer_size, training_targets.shape[0], softmax, None, lr)]
 
+    epoch_errors = []
+    for i in range(100):
+        result = training_inputs
+        for layer in layers:
+            result = layer.forward(result)
 
-layers = [Dense(256, 256, sigmoid, sigmoid_derive, 0.3),
-          Dense(256, 10, softmax, None, 0.3)]
+        loss = logloss(training_targets, result)
+        epoch_errors.append(loss)
 
-epoch_errors = []
-for i in range(100):
-    # get result
-    # TODO понять, почему ошибка не уменьшается
-    layer1_out = layers[0].forward(training_inputs)
-    layer2_out = layers[1].forward(layer1_out)
-    result = layer2_out
+        dE = logloss_derive(training_targets, result)
+        for layer in list(reversed(layers)):
+            dE = layer.backward(dE)
 
-    # error
-    loss = logloss(training_targets, result)
-    epoch_errors.append(loss)
+    if (show_plot):
+        plt.plot(epoch_errors)
+        plt.show()
 
-    dZ = logloss_derive(training_targets, result)
-    for layer in list(reversed(layers)):
-        dZ = layer.backward(dZ)
+    result = test_inputs
+    for layer in layers:
+        result = layer.forward(result)
 
-plt.plot(epoch_errors)
-plt.show()
-
+    digits = np.argmax(test_targets, axis=0)
+    predicted_digits = np.argmax(result, axis=0)
+    prediction_accuracy = np.sum(digits == predicted_digits) / test_inputs.shape[1]
+    return prediction_accuracy
