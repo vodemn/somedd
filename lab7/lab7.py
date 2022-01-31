@@ -27,8 +27,8 @@ for i in range(1000):
     w -= derive_error * 0.2
 
 
-#plt.plot(epoch_errors)
-#plt.show()
+plt.plot(epoch_errors)
+plt.show()
 
 
 test, targets = get_dataset('test')
